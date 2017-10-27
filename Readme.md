@@ -1,5 +1,7 @@
 # Pac File Tester
 
+[![Build Status](https://travis-ci.org/Arcath/pac-file-tester.svg?branch=master)](https://travis-ci.org/Arcath/pac-file-tester) [![Coverage Status](https://coveralls.io/repos/github/Arcath/pac-file-tester/badge.svg)](https://coveralls.io/github/Arcath/pac-file-tester)
+
 Tests a PAC file and returns its output.
 
 ## Usage
