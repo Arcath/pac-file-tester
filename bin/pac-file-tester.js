@@ -75,28 +75,14 @@ var runCompare = function(file1, file2){
       var prepared2 = false
 
       suite.add('File 1', function(deffered){
-        if(prepared1){
-          PACFileTester.runPAC(program.url, function(){
-            deffered.resolve()
-          })
-        }else{
-          PACFileTester.getResult(file1, program.url, function(result){
-            prepared1 = true
-            deffered.resolve()
-          })
-        }
+        PACFileTester.getResult(file1, program.url, function(result){
+          deffered.resolve()
+        })
       }, {defer: true})
       .add('File 2', function(deffered){
-        if(prepared2){
-          PACFileTester.runPAC(program.url, function(){
-            deffered.resolve()
-          })
-        }else{
-          PACFileTester.getResult(file2, program.url, function(result){
-            prepared2 = true
-            deffered.resolve()
-          })
-        }
+        PACFileTester.getResult(file2, program.url, function(result){
+          deffered.resolve()
+        })
       }, {defer: true})
       .on('cycle', function(event) {
         console.log(String(event.target))
