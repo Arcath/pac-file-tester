@@ -43,9 +43,15 @@ describe('Result Testing', function(){
   it('should return a proxy for localhost using DNS resolution', function(done){
     PACFileTester.getResult(path.join(__dirname, 'fixtures', 'dnsResolve.pac'), 'https://localhost', function(result){
       expect(result).to.equal("PROXY myproxy.com:8080")
-      PACFileTester.getResult(path.join(__dirname, 'fixtures', 'dnsResolve.pac'), 'https://www.foobar.com', function(result){
+
+      PACFileTester.dnsCache = {}
+
+      PACFileTester.getResult(path.join(__dirname, 'fixtures', 'dnsResolve.pac'), 'https://www.example.com', function(result){
         expect(result).to.equal("DIRECT")
-        PACFileTester.getResult(path.join(__dirname, 'fixtures', 'dnsResolve.pac'), 'https://www.foobar.com', function(result){
+
+        PACFileTester.dnsCache = {}
+
+        PACFileTester.getResult(path.join(__dirname, 'fixtures', 'dnsResolve.pac'), 'https://www.example.com', function(result){
           expect(result).to.equal("DIRECT")
           done()
         })
