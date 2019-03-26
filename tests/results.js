@@ -58,4 +58,11 @@ describe('Result Testing', function(){
       })
     })
   })
+
+  it('should support isPlainHostName', function(done){
+    PACFileTester.getResult(path.join(__dirname, 'fixtures', 'plainHostname.pac'), 'https://localhost', function(result){
+      expect(result).to.equal("PROXY myproxy.com:8080")
+      done()
+    })
+  })
 })
