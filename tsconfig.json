@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "removeComments": false,
+    "noEmitOnError": true,
+    "noResolve": false,
+    "experimentalDecorators": true,
+    "strict": false,
+    "noUnusedParameters": false,
+    "noUnusedLocals": true,
+    "sourceMap": true,
+    "baseUrl": "./src/",
+    "outDir": "./lib/",
+    "allowUnusedLabels": true,
+    "jsx": "react",
+    "strictPropertyInitialization": false,
+    "declaration": true,
+    "esModuleInterop": true
+  },
+  "compileOnSave": false,
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx"
+  ],
+  "exclude": [
+    "lib",
+    "node_modules",
+    "src/**/*.spec.ts",
+    "src/**/*.spec.tsx"
+  ]
+}
