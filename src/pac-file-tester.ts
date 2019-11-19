@@ -1,6 +1,8 @@
 import {address} from 'ip'
 import {resolve4} from 'dns'
 import vm from 'vm'
+import http from 'http'
+import fs from 'fs'
 
 const dnsCache: {[address: string]: string} = {
   localhost: '127.0.0.1'
@@ -93,5 +95,27 @@ const vmContext = (ip: string) => {
     isInNet,
     dnsResolve,
     isPlainHostName
+  })
+}
+
+export const getFileContents = async (url) => {
+  return new Promise((resolve) => {
+    if(url.substr(0,4) === 'http'){
+      // Download
+      let content = ''
+
+      http.get(url, (response) => {
+        response.on('data', (chunk) => {
+          content += chunk.toString()
+        })
+
+        response.on('end', () => {
+          resolve(content)
+        })
+      })
+    }else{
+      // File
+      resolve(fs.readFileSync(url).toString())
+    }
   })
 }

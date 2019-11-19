@@ -26,10 +26,12 @@ pac-file-tester -f http://your.site/proxy.pac -u http://www.google.com
 npm install --save pac-file-tester
 ```
 
-```js
-cost PACFileTester = require('pac-file-tester')
+```ts
+import {testPacFile, getFileContents} from 'pac-file-tester'
 
-PACFileTester.getResult('/path/to/proxy.pac', 'http://some.site.com', function(result){
-  console.log(result)
-})
+const test = async () => {
+  const script = await getFileContents('http://pac.domain.com/proxy.pac')
+
+  const result = await testPacFile(script, 'https://www.google.com')
+}
 ```

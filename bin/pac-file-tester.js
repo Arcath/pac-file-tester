@@ -1,10 +1,8 @@
 #!/usr/bin/env node
 
 const Benchmark = require('benchmark')
-const fs = require('fs')
 const path = require('path')
 const program = require('commander')
-const http = require('http')
 const pft = require('../lib/pac-file-tester')
 
 const pkg = require(path.join(__dirname, '..', 'package.json'))
@@ -28,31 +26,9 @@ if(!program.url){
   return
 }
 
-const getFileContents = async (url) => {
-  return new Promise((resolve) => {
-    if(url.substr(0,4) === 'http'){
-      // Download
-      let content = ''
-
-      http.get(url, (response) => {
-        response.on('data', (chunk) => {
-          content += chunk.toString()
-        })
-
-        response.on('end', () => {
-          resolve(content)
-        })
-      })
-    }else{
-      // File
-      resolve(fs.readFileSync(url).toString())
-    }
-  })
-}
-
 const run = async (url) => {
   console.log(url)
-  const script = await getFileContents(url)
+  const script = await pft.getFileContents(url)
 
   const result = await pft.testPacFile(script, program.url)
 
@@ -63,8 +39,8 @@ const runCompare = async () => {
   await run(program.file)
   await run(program.compare)
 
-  const script1 = await getFileContents(program.file)
-  const script2 = await getFileContents(program.compare)
+  const script1 = await pft.getFileContents(program.file)
+  const script2 = await pft.getFileContents(program.compare)
 
   const suite = new Benchmark.Suite
 
