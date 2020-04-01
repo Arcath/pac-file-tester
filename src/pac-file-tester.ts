@@ -1,8 +1,9 @@
 import {address} from 'ip'
-import {resolve4} from 'dns'
 import vm from 'vm'
 import http from 'http'
 import fs from 'fs'
+
+import {resolve} from 'dns-sync'
 
 const dnsCache: {[address: string]: string} = {
   localhost: '127.0.0.1'
@@ -13,15 +14,7 @@ export const testPacFile = async (file: string, url: string, ip: string = addres
   const script = `${file}\r\nresult = FindProxyForURL("${url}", "${host}")`
 
   if(!dnsCache[host]){
-    dnsCache[host] = await new Promise((resolve) => {
-      resolve4(host, (err, addresses) => {
-        if(!addresses){
-          resolve(host)
-        }
-
-        resolve(addresses[0])
-      })
-    })
+    dnsCache[host] = resolve(host)
   }
 
   const sandbox = new vm.Script(script)
@@ -42,6 +35,12 @@ export const getHost = (url: string): string => {
 
 const vmContext = (ip: string) => {
   const dnsResolve = (host: string) => {
+    if(dnsCache[host]){
+      return dnsCache[host]
+    }
+
+    dnsCache[host] = resolve(host)
+
     return dnsCache[host]
   }
 

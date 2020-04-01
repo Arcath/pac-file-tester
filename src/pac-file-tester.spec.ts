@@ -2,6 +2,8 @@ import {testPacFile} from './pac-file-tester'
 
 const DIRECT = `DIRECT`
 const PROXY = `PROXY myproxy.com:8080`
+const TEST_HOST = `www.ed-itsolutions.com`
+const TEST_IP = `206.189.18.50`
 
 const DIRECT_PAC = `function FindProxyForURL(url, host){
   return "${DIRECT}"
@@ -33,6 +35,14 @@ const DNS_RESOLVE_PAC = `function FindProxyForURL(url, host){
 
 const IS_PLAIN_HOSTNAME_PAC = `function FindProxyForURL(url, host){
   if(isPlainHostName(host)){
+    return "${PROXY}";
+  }
+
+  return "${DIRECT}";
+}`
+
+const DNS_RESOLVE_EXTRA_PAC = `function FindProxyForURL(url, host){
+  if(isInNet(dnsResolve('${TEST_HOST}'), '${TEST_IP}', '255.255.255.255')){
     return "${PROXY}";
   }
 
@@ -75,6 +85,10 @@ describe('Test Pac File', () => {
     result = await testPacFile(DNS_RESOLVE_PAC, 'https://www.google.com')
 
     expect(result).toBe(DIRECT)
+
+    result = await testPacFile(DNS_RESOLVE_EXTRA_PAC, 'https://www.google.com')
+
+    expect(result).toBe(PROXY)
   })
 
   it('should support isPlainHostname', async () => {

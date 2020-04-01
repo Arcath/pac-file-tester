@@ -16,6 +16,7 @@
   "dependencies": {
     "benchmark": "^2.1.4",
     "commander": "^2.19.0",
+    "dns-sync": "^0.2.0",
     "download-file": "^0.1.5",
     "ip": "^1.1.5"
   },
