@@ -15,18 +15,18 @@
   "license": "MIT",
   "dependencies": {
     "benchmark": "^2.1.4",
-    "commander": "^2.19.0",
+    "commander": "^5.0.0",
     "dns-sync": "^0.2.0",
     "download-file": "^0.1.5",
     "ip": "^1.1.5"
   },
   "devDependencies": {
     "@types/ip": "^1.1.0",
-    "@types/jest": "^24.0.23",
-    "@types/node": "^12.12.9",
-    "jest": "^24.9.0",
-    "ts-jest": "^24.1.0",
-    "typescript": "^3.7.2"
+    "@types/jest": "^25.1.4",
+    "@types/node": "^13.9.8",
+    "jest": "^25.2.4",
+    "ts-jest": "^25.3.0",
+    "typescript": "^3.8.3"
   },
   "bin": {
     "pac-file-tester": "bin/pac-file-tester.js"
