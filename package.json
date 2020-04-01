@@ -1,6 +1,6 @@
 {
   "name": "pac-file-tester",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Test PAC files for performance and results",
   "main": "lib/pac-file-tester.js",
   "scripts": {
