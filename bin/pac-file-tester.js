@@ -14,6 +14,7 @@ program
   .option('-u --url <url>', 'URL to supply for testing')
   .option('-i --ip <ip>', 'The IP to supply to the PAC file (defaults to your own)')
   .option('-c --compare <url>', 'URL of another PAC file to compare to')
+  .option('-d --dns <string>', 'Manual DNS entry in the form HOST|IP e.g. google.com|8.8.8.8')
   .parse(process.argv)
 
 if(!program.file){
@@ -30,7 +31,13 @@ const run = async (url) => {
   console.log(url)
   const script = await pft.getFileContents(url)
 
-  const result = await pft.testPacFile(script, program.url)
+  if(program.dns){
+    const [host, ip] = program.dns.split('|')
+
+    pft.addToDNSCache(host, ip)
+  }
+
+  const result = await pft.testPacFile(script, program.url, program.ip)
 
   console.log(result)
 }
@@ -45,11 +52,11 @@ const runCompare = async () => {
   const suite = new Benchmark.Suite
 
   suite.add('File 1', async (deffered) => {
-    await pft.testPacFile(script1, program.url)
+    await pft.testPacFile(script1, program.url, program.ip)
     deffered.resolve()
   }, {defer: true})
   .add('File 2', async (deffered) => {
-    await pft.testPacFile(script2, program.url)
+    await pft.testPacFile(script2, program.url, program.ip)
     deffered.resolve()
   }, {defer: true})
   .on('cycle', function(event) {

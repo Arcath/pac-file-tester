@@ -5,7 +5,8 @@
   "main": "lib/pac-file-tester.js",
   "scripts": {
     "test": "jest",
-    "prepublishOnly": "tsc"
+    "prepublishOnly": "tsc",
+    "compile": "tsc"
   },
   "keywords": [
     "pac",

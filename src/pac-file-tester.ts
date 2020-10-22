@@ -9,6 +9,10 @@ const dnsCache: {[address: string]: string} = {
   localhost: '127.0.0.1'
 }
 
+export const addToDNSCache = (host: string, ip: string) => {
+  dnsCache[host] = ip
+}
+
 export const testPacFile = async (file: string, url: string, ip: string = address()): Promise<string> => {
   const host = getHost(url)  
   const script = `${file}\r\nresult = FindProxyForURL("${url}", "${host}")`

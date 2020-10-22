@@ -1,9 +1,11 @@
-import {testPacFile} from './pac-file-tester'
+import {testPacFile, addToDNSCache} from './pac-file-tester'
 
 const DIRECT = `DIRECT`
 const PROXY = `PROXY myproxy.com:8080`
 const TEST_HOST = `www.ed-itsolutions.com`
 const TEST_IP = `206.189.18.50`
+const MANUAL_HOST = `foo.bar`
+const MANUAL_IP = `172.16.0.1`
 
 const DIRECT_PAC = `function FindProxyForURL(url, host){
   return "${DIRECT}"
@@ -49,6 +51,14 @@ const DNS_RESOLVE_EXTRA_PAC = `function FindProxyForURL(url, host){
   return "${DIRECT}";
 }`
 
+const DNS_RESOLVE_MANUAL_PAC = `function FindProxyForURL(url, host){
+  if(isInNet(dnsResolve('${MANUAL_HOST}'), '${MANUAL_IP}', '255.255.255.255')){
+    return "${PROXY}";
+  }
+
+  return "${DIRECT}";
+}`
+
 
 describe('Test Pac File', () => {
   it('should return a result', async () => {
@@ -87,6 +97,12 @@ describe('Test Pac File', () => {
     expect(result).toBe(DIRECT)
 
     result = await testPacFile(DNS_RESOLVE_EXTRA_PAC, 'https://www.google.com')
+
+    expect(result).toBe(PROXY)
+
+    addToDNSCache(MANUAL_HOST, MANUAL_IP)
+
+    result = await testPacFile(DNS_RESOLVE_MANUAL_PAC, 'https://www.google.com')
 
     expect(result).toBe(PROXY)
   })

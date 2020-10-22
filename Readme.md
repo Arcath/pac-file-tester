@@ -17,8 +17,9 @@ pac-file-tester -f http://your.site/proxy.pac -u http://www.google.com
 
  - -f --file, the url/path of the pac file to test.
  - -u --url, the url to test the pac file against.
- - -i --ip, the IP address to return from `myIpAddress()`, defaults to your primary IP. (Optional)
+ - -i --ip, the IP address to return from `myIpAddress()`
  - -c --compare, the url/path of another pac file to compare output & speed with. (Optional)
+ - -d --dns, a manual DNS entry, e.g. `dns.google.com|8.8.8.8`
 
 ### Pragmatically
 
