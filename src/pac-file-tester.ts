@@ -45,6 +45,10 @@ const vmContext = (ip: string) => {
 
     dnsCache[host] = resolve(host)
 
+    if(dnsCache[host] === null){
+      dnsCache[host] = '255.255.255.255'
+    }
+
     return dnsCache[host]
   }
 
