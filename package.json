@@ -16,7 +16,7 @@
   "license": "MIT",
   "dependencies": {
     "benchmark": "^2.1.4",
-    "commander": "^6.1.0",
+    "commander": "^6.2.0",
     "dns-sync": "^0.2.1",
     "download-file": "^0.1.5",
     "ip": "^1.1.5"
@@ -24,10 +24,10 @@
   "devDependencies": {
     "@types/ip": "^1.1.0",
     "@types/jest": "^26.0.15",
-    "@types/node": "^14.14.2",
-    "jest": "^26.6.0",
-    "ts-jest": "^26.4.1",
-    "typescript": "^4.0.3"
+    "@types/node": "^14.14.6",
+    "jest": "^26.6.1",
+    "ts-jest": "^26.4.3",
+    "typescript": "^4.0.5"
   },
   "bin": {
     "pac-file-tester": "bin/pac-file-tester.js"
