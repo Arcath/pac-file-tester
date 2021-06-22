@@ -111,5 +111,9 @@ describe('Test Pac File', () => {
     let result = await testPacFile(IS_PLAIN_HOSTNAME_PAC, 'https://localhost')
 
     expect(result).toBe(PROXY)
+
+    result = await testPacFile(IS_PLAIN_HOSTNAME_PAC, 'https://www.google.com')
+    expect(result).toBe(DIRECT)
   })
+
 })

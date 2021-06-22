@@ -92,7 +92,7 @@ const vmContext = (ip: string) => {
   }
 
   const isPlainHostName = (host: string) => {
-    return (host.search('\\\\.') == -1);
+    return host.indexOf(".") === -1;
   }
 
   return vm.createContext({
