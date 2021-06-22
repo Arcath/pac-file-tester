@@ -67,7 +67,6 @@ const PROXY_SUBDOMAIN_PAC = `function FindProxyForURL(url, host){
   return "${DIRECT}";
 }`
 
-
 describe('Test Pac File', () => {
   it('should return a result', async () => {
     const result = await testPacFile(DIRECT_PAC, 'https://www.google.com')
@@ -86,11 +85,19 @@ describe('Test Pac File', () => {
   })
 
   it('should support isInNet', async () => {
-    let result = await testPacFile(PROXY_SUBNET_PAC, 'https://www.google.com', '10.0.0.1')
+    let result = await testPacFile(
+      PROXY_SUBNET_PAC,
+      'https://www.google.com',
+      '10.0.0.1'
+    )
 
     expect(result).toBe(PROXY)
 
-    result = await testPacFile(PROXY_SUBNET_PAC, 'https://www.google.com', '10.0.2.1')
+    result = await testPacFile(
+      PROXY_SUBNET_PAC,
+      'https://www.google.com',
+      '10.0.2.1'
+    )
 
     expect(result).toBe(DIRECT)
   })
@@ -121,7 +128,6 @@ describe('Test Pac File', () => {
 
     result = await testPacFile(IS_PLAIN_HOSTNAME_PAC, 'https://www.google.com')
     expect(result).toBe(DIRECT)
-
   })
 
   it('should support dnsDomainIs', async () => {
@@ -130,7 +136,5 @@ describe('Test Pac File', () => {
 
     result = await testPacFile(PROXY_SUBDOMAIN_PAC, 'https://www.google.com')
     expect(result).toBe(DIRECT)
-
-  }) 
-
+  })
 })
