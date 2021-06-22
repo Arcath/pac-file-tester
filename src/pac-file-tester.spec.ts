@@ -131,8 +131,6 @@ describe('Test Pac File', () => {
     result = await testPacFile(PROXY_SUBDOMAIN_PAC, 'https://www.google.com')
     expect(result).toBe(DIRECT)
 
-  })
-
-  
+  }) 
 
 })

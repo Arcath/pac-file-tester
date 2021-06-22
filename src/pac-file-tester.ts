@@ -96,6 +96,10 @@ const vmContext = (ip: string) => {
     return host.endsWith(domain);
   }
 
+  const isResolvable = (host: string) => {
+    return resolve(host) !== null
+  }
+
   return vm.createContext({
     console: console,
     myIpAddress,
@@ -103,7 +107,8 @@ const vmContext = (ip: string) => {
     isInNet,
     dnsResolve,
     isPlainHostName,
-    dnsDomainIs
+    dnsDomainIs,
+    isResolvable
   })
 }
 
