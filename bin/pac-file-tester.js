@@ -22,37 +22,39 @@ program
   )
   .parse(process.argv)
 
-if (!program.file) {
+const {file, url, dns, ip, compare} = program.opts()
+
+if (!file) {
   console.log('No PAC File supplied')
   return
 }
 
-if (!program.url) {
+if (!url) {
   console.log('No URL supplied')
   return
 }
 
-const run = async url => {
-  console.log(url)
-  const script = await pft.getFileContents(url)
+const run = async pacUrl => {
+  console.log(pacUrl)
+  const script = await pft.getFileContents(pacUrl)
 
-  if (program.dns) {
+  if (dns) {
     const [host, ip] = program.dns.split('|')
 
     pft.addToDNSCache(host, ip)
   }
 
-  const result = await pft.testPacFile(script, program.url, program.ip)
+  const result = await pft.testPacFile(script, url, ip)
 
   console.log(result)
 }
 
 const runCompare = async () => {
-  await run(program.file)
-  await run(program.compare)
+  await run(file)
+  await run(compare)
 
-  const script1 = await pft.getFileContents(program.file)
-  const script2 = await pft.getFileContents(program.compare)
+  const script1 = await pft.getFileContents(file)
+  const script2 = await pft.getFileContents(compare)
 
   const suite = new Benchmark.Suite()
 
@@ -60,7 +62,7 @@ const runCompare = async () => {
     .add(
       'File 1',
       async deffered => {
-        await pft.testPacFile(script1, program.url, program.ip)
+        await pft.testPacFile(script1, url, ip)
         deffered.resolve()
       },
       {defer: true}
@@ -68,7 +70,7 @@ const runCompare = async () => {
     .add(
       'File 2',
       async deffered => {
-        await pft.testPacFile(script2, program.url, program.ip)
+        await pft.testPacFile(script2, url, ip)
         deffered.resolve()
       },
       {defer: true}
@@ -82,8 +84,8 @@ const runCompare = async () => {
     .run({async: true})
 }
 
-if (!program.compare) {
-  run(program.file)
+if (!compare) {
+  run(file)
 } else {
   runCompare()
 }
