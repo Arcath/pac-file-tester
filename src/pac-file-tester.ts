@@ -30,11 +30,8 @@ export const testPacFile = async (file: string, url: string, ip: string = addres
 }
 
 export const getHost = (url: string): string => {
-  const regex = /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n]+)/im
-
-  const match = regex.exec(url)
-
-  return match[1]
+  const urlObj = new URL(url);
+  return urlObj.hostname
 }
 
 const vmContext = (ip: string) => {
@@ -95,13 +92,19 @@ const vmContext = (ip: string) => {
     return host.indexOf(".") === -1;
   }
 
+  const dnsDomainIs = (host: string, domain: string) => {
+    console.log(`${host} compare to ${domain}`);
+    return host.endsWith(domain);
+  }
+
   return vm.createContext({
     console: console,
     myIpAddress,
     shExpMatch,
     isInNet,
     dnsResolve,
-    isPlainHostName
+    isPlainHostName,
+    dnsDomainIs
   })
 }
 
