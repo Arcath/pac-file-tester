@@ -12,7 +12,7 @@ const DIRECT_PAC = `function FindProxyForURL(url, host){
 }`
 
 const PROXY_GOOGLE_PAC = `function FindProxyForURL(url, host){
-  if(shExpMatch(host, "google.com")){
+  if(shExpMatch(host, "*.google.com")){
     return "${PROXY}";
   }
 
@@ -53,6 +53,14 @@ const DNS_RESOLVE_EXTRA_PAC = `function FindProxyForURL(url, host){
 
 const DNS_RESOLVE_MANUAL_PAC = `function FindProxyForURL(url, host){
   if(isInNet(dnsResolve('${MANUAL_HOST}'), '${MANUAL_IP}', '255.255.255.255')){
+    return "${PROXY}";
+  }
+
+  return "${DIRECT}";
+}`
+
+const PROXY_SUBDOMAIN_PAC = `function FindProxyForURL(url, host){
+  if(dnsDomainIs(host, ".ed-itsolutions.com")){
     return "${PROXY}";
   }
 
@@ -109,7 +117,20 @@ describe('Test Pac File', () => {
 
   it('should support isPlainHostname', async () => {
     let result = await testPacFile(IS_PLAIN_HOSTNAME_PAC, 'https://localhost')
-
     expect(result).toBe(PROXY)
+
+    result = await testPacFile(IS_PLAIN_HOSTNAME_PAC, 'https://www.google.com')
+    expect(result).toBe(DIRECT)
+
   })
+
+  it('should support dnsDomainIs', async () => {
+    let result = await testPacFile(PROXY_SUBDOMAIN_PAC, `https://${TEST_HOST}`)
+    expect(result).toBe(PROXY)
+
+    result = await testPacFile(PROXY_SUBDOMAIN_PAC, 'https://www.google.com')
+    expect(result).toBe(DIRECT)
+
+  }) 
+
 })

@@ -30,11 +30,8 @@ export const testPacFile = async (file: string, url: string, ip: string = addres
 }
 
 export const getHost = (url: string): string => {
-  const regex = /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n]+)/im
-
-  const match = regex.exec(url)
-
-  return match[1]
+  const urlObj = new URL(url);
+  return urlObj.hostname
 }
 
 const vmContext = (ip: string) => {
@@ -92,7 +89,15 @@ const vmContext = (ip: string) => {
   }
 
   const isPlainHostName = (host: string) => {
-    return (host.search('\\\\.') == -1);
+    return host.indexOf(".") === -1;
+  }
+
+  const dnsDomainIs = (host: string, domain: string) => {
+    return host.endsWith(domain);
+  }
+
+  const isResolvable = (host: string) => {
+    return resolve(host) !== null
   }
 
   return vm.createContext({
@@ -101,7 +106,9 @@ const vmContext = (ip: string) => {
     shExpMatch,
     isInNet,
     dnsResolve,
-    isPlainHostName
+    isPlainHostName,
+    dnsDomainIs,
+    isResolvable
   })
 }
 
