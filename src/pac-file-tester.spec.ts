@@ -67,6 +67,14 @@ const PROXY_SUBDOMAIN_PAC = `function FindProxyForURL(url, host){
   return "${DIRECT}";
 }`
 
+const ISRESOLVABLE_PAC = `function FindProxyForURL(url, host){
+  if(isResolvable(host)){
+    return "${PROXY}";
+  }
+
+  return "${DIRECT}";
+}`
+
 describe('Test Pac File', () => {
   it('should return a result', async () => {
     const result = await testPacFile(DIRECT_PAC, 'https://www.google.com')
@@ -135,6 +143,17 @@ describe('Test Pac File', () => {
     expect(result).toBe(PROXY)
 
     result = await testPacFile(PROXY_SUBDOMAIN_PAC, 'https://www.google.com')
+    expect(result).toBe(DIRECT)
+  })
+
+  it('should support isResolvable', async () => {
+    let result = await testPacFile(ISRESOLVABLE_PAC, `https://www.google.com`)
+    expect(result).toBe(PROXY)
+
+    result = await testPacFile(
+      ISRESOLVABLE_PAC,
+      `https://www.thislongdomaindoesnotexist.com`
+    )
     expect(result).toBe(DIRECT)
   })
 })
