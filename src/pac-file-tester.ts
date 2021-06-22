@@ -93,7 +93,6 @@ const vmContext = (ip: string) => {
   }
 
   const dnsDomainIs = (host: string, domain: string) => {
-    console.log(`${host} compare to ${domain}`);
     return host.endsWith(domain);
   }
 
