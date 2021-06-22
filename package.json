@@ -1,12 +1,11 @@
 {
   "name": "pac-file-tester",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Test PAC files for performance and results",
   "main": "lib/pac-file-tester.js",
   "scripts": {
     "test": "jest",
-    "prepublishOnly": "tsc",
-    "compile": "tsc"
+    "build": "tsc"
   },
   "keywords": [
     "pac",
