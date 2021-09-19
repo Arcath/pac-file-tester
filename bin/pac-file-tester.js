@@ -39,7 +39,7 @@ const run = async pacUrl => {
   const script = await pft.getFileContents(pacUrl)
 
   if (dns) {
-    const [host, ip] = program.dns.split('|')
+    const [host, ip] = dns.split('|')
 
     pft.addToDNSCache(host, ip)
   }
