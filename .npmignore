@@ -2,3 +2,6 @@
 coverage/
 temp/*
 !temp/.gitkeep
+src/
+.github/
+.vscode/
