@@ -1,4 +1,4 @@
-import {testPacFile, addToDNSCache, getFileContents} from './pac-file-tester'
+import {testPacFile, getFileContents} from './pac-file-tester'
 
 const DIRECT = `DIRECT`
 const PROXY = `PROXY myproxy.com:8080`
@@ -101,19 +101,15 @@ describe('Test Pac File', () => {
   })
 
   it('should support isInNet', async () => {
-    let result = await testPacFile(
-      PROXY_SUBNET_PAC,
-      'https://www.google.com',
-      '10.0.0.1'
-    )
+    let result = await testPacFile(PROXY_SUBNET_PAC, 'https://www.google.com', {
+      ip: '10.0.0.1'
+    })
 
     expect(result).toBe(PROXY)
 
-    result = await testPacFile(
-      PROXY_SUBNET_PAC,
-      'https://www.google.com',
-      '10.0.2.1'
-    )
+    result = await testPacFile(PROXY_SUBNET_PAC, 'https://www.google.com', {
+      ip: '10.0.2.1'
+    })
 
     expect(result).toBe(DIRECT)
   })
@@ -131,11 +127,24 @@ describe('Test Pac File', () => {
 
     expect(result).toBe(PROXY)
 
-    addToDNSCache(MANUAL_HOST, MANUAL_IP)
+    result = await testPacFile(DNS_RESOLVE_MANUAL_PAC, 'https://www.google.com')
+
+    expect(result).toBe(DIRECT)
+
+    const dnsEntries = {}
+    dnsEntries[MANUAL_HOST] = MANUAL_IP
+
+    result = await testPacFile(
+      DNS_RESOLVE_MANUAL_PAC,
+      'https://www.google.com',
+      {dnsEntries}
+    )
+
+    expect(result).toBe(PROXY)
 
     result = await testPacFile(DNS_RESOLVE_MANUAL_PAC, 'https://www.google.com')
 
-    expect(result).toBe(PROXY)
+    expect(result).toBe(DIRECT)
 
     result = await testPacFile(
       DNS_RESOLVE_FALLBACK_PAC,

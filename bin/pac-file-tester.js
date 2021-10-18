@@ -4,6 +4,7 @@ const Benchmark = require('benchmark')
 const path = require('path')
 const program = require('commander')
 const pft = require('../lib/pac-file-tester')
+const {resolve} = require('dns-sync')
 
 const pkg = require(path.join(__dirname, '..', 'package.json'))
 
@@ -34,24 +35,29 @@ if (!url) {
   return
 }
 
-const run = async pacUrl => {
+const run = async (pacUrl, dnsEntries) => {
   console.log(pacUrl)
   const script = await pft.getFileContents(pacUrl)
 
   if (dns) {
     const [host, ip] = dns.split('|')
 
-    pft.addToDNSCache(host, ip)
+    dnsEntries[host] = ip
   }
 
-  const result = await pft.testPacFile(script, url, ip)
+  const result = await pft.testPacFile(script, url, {ip, dnsEntries})
 
   console.log(result)
 }
 
 const runCompare = async () => {
-  await run(file)
-  await run(compare)
+  const dnsEntries = {}
+
+  const host = pft.getHost(url)
+  dnsEntries[host] = resolve(host)
+
+  await run(file, dnsEntries)
+  await run(compare, dnsEntries)
 
   const script1 = await pft.getFileContents(file)
   const script2 = await pft.getFileContents(compare)
@@ -85,7 +91,7 @@ const runCompare = async () => {
 }
 
 if (!compare) {
-  run(file)
+  run(file, {})
 } else {
   runCompare()
 }

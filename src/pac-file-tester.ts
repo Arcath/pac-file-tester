@@ -6,28 +6,42 @@ import path from 'path'
 
 import {resolve} from 'dns-sync'
 
-const dnsCache: {[address: string]: string} = {
-  localhost: '127.0.0.1'
+interface TestPACFileOptions {
+  /** The IP Address to return for `myIpAddress()` */
+  ip: string
+  /**
+   * DNS Entries to supply to the context.
+   *
+   * e.g.
+   *
+   * ```
+   * {'www.example.com': '1.2.3.4'}
+   * ```
+   */
+  dnsEntries: {[host: string]: string}
 }
 
-export const addToDNSCache = (host: string, ip: string) => {
-  dnsCache[host] = ip
-}
-
+/**
+ * Test the pac file for the given url.
+ *
+ * @param file The PAC file as a string.
+ * @param url The URL to get the result for.
+ * @param options Additional options.
+ * @returns
+ */
 export const testPacFile = async (
   file: string,
   url: string,
-  ip: string = address()
+  options?: Partial<TestPACFileOptions>
 ): Promise<string> => {
   const host = getHost(url)
   const script = `${file}\r\nresult = FindProxyForURL("${url}", "${host}")`
 
-  if (!dnsCache[host]) {
-    dnsCache[host] = resolve(host)
-  }
-
   const sandbox = new vm.Script(script)
-  const context = vmContext(ip)
+  const context = createVMContext({
+    ip: options && options.ip ? options.ip : address(),
+    dnsEntries: options && options.dnsEntries ? options.dnsEntries : {}
+  })
 
   sandbox.runInContext(context)
 
@@ -39,7 +53,12 @@ export const getHost = (url: string): string => {
   return urlObj.hostname
 }
 
-const vmContext = (ip: string) => {
+const createVMContext = (options: TestPACFileOptions) => {
+  const dnsCache: {[address: string]: string} = {
+    localhost: '127.0.0.1',
+    ...options.dnsEntries
+  }
+
   const dnsResolve = (host: string) => {
     if (dnsCache[host]) {
       return dnsCache[host]
@@ -54,7 +73,7 @@ const vmContext = (ip: string) => {
     return dnsCache[host]
   }
 
-  const myIpAddress = () => ip
+  const myIpAddress = () => options.ip
 
   const shExpMatch = (url: string, pattern: string) => {
     pattern = pattern.replace(/\./g, '\\.')
@@ -117,7 +136,13 @@ const vmContext = (ip: string) => {
   })
 }
 
-export const getFileContents = async url => {
+/**
+ * Returns the contents of the given url as a string.
+ *
+ * @param url either 'http' or 'file' address for the file.
+ * @returns File contents as a string.
+ */
+export const getFileContents = async (url: string) => {
   return new Promise(resolve => {
     if (url.substr(0, 4) === 'http') {
       // Download

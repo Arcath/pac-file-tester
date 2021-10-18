@@ -34,12 +34,59 @@ npx pac-file-tester -f http://your.site/proxy.pac -u http://www.google.com
 npm install --save pac-file-tester
 ```
 
+#### `getFileContents(url: string): Promise<string>`
+
+Returns the contents of the given url, suppports `http` and `file` addresses.
+
 ```ts
-import {testPacFile, getFileContents} from 'pac-file-tester'
+const contents = await getFileContents('http://pac.example.com/proxy.pac')
+```
 
-const test = async () => {
-  const script = await getFileContents('http://pac.domain.com/proxy.pac')
+#### `testPacFile(file: string, url: string, options: Options)`
 
-  const result = await testPacFile(script, 'https://www.google.com')
-}
+Tests the PAC file for the given url.
+
+Takes an optional options object with the following keys:
+
+| Key        |      Default      | Description                                                                 |
+| :--------- | :---------------: | :-------------------------------------------------------------------------- |
+| ip         | _your current ip_ | The IP Address to return for `myIpAddress()`                                |
+| dnsEntries |       `{}`        | DNS Entries to supply to the context. e.g. `{'www.example.com': '1.2.3.4'}` |
+
+##### Examples
+
+###### Local file
+
+Run a PAC file from disk for `https://www.google.com`.
+
+```ts
+const file = await getFileContents('file://./proxy.pac')
+
+const result = await testPacFile(file, 'https://www.google.com')
+```
+
+##### Remote file with replaced IP
+
+Run a PAC file from a web server for `https://www.google.com` whilst
+impersonating the IP address `192.168.2.10`.
+
+```ts
+const file = await getFileContents('http://pac.example.com/proxy.pac')
+
+const result = await testPacFile(file, 'https://www.google.com', {
+  ip: '192.168.2.10'
+})
+```
+
+##### Remote file with a custom DNS entry
+
+Run a PAC file from a web server for `https://www.google.com` with a custom DNS
+entry for `example.com` that resolves to `127.0.0.1`
+
+```ts
+const file = await getFileContents('http://pac.example.com/proxy.pac')
+
+const result = await testPacFile(file, 'https://www.google.com', {
+  dnsEntries: {'example.com': '127.0.0.1'}
+})
 ```
