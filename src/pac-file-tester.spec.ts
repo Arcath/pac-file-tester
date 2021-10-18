@@ -1,4 +1,4 @@
-import {testPacFile, addToDNSCache} from './pac-file-tester'
+import {testPacFile, addToDNSCache, getFileContents} from './pac-file-tester'
 
 const DIRECT = `DIRECT`
 const PROXY = `PROXY myproxy.com:8080`
@@ -75,6 +75,14 @@ const ISRESOLVABLE_PAC = `function FindProxyForURL(url, host){
   return "${DIRECT}";
 }`
 
+const DNS_RESOLVE_FALLBACK_PAC = `function FindProxyForURL(url, host){
+  if(dnsResolve(host) == '255.255.255.255'){
+    return "${PROXY}";
+  }
+
+  return "${DIRECT}";
+}`
+
 describe('Test Pac File', () => {
   it('should return a result', async () => {
     const result = await testPacFile(DIRECT_PAC, 'https://www.google.com')
@@ -128,6 +136,13 @@ describe('Test Pac File', () => {
     result = await testPacFile(DNS_RESOLVE_MANUAL_PAC, 'https://www.google.com')
 
     expect(result).toBe(PROXY)
+
+    result = await testPacFile(
+      DNS_RESOLVE_FALLBACK_PAC,
+      'https://some.domain.that.doesnt.exist'
+    )
+
+    expect(result).toBe(PROXY)
   })
 
   it('should support isPlainHostname', async () => {
@@ -155,5 +170,15 @@ describe('Test Pac File', () => {
       `https://www.thislongdomaindoesnotexist.com`
     )
     expect(result).toBe(DIRECT)
+  })
+
+  it('should get file contents', async () => {
+    const content = await getFileContents('http://www.msftncsi.com/ncsi.txt')
+
+    expect(content).toBe('Microsoft NCSI')
+
+    const fileContent = await getFileContents('file://./.npmignore')
+
+    expect(fileContent).toMatch('.gitkeep')
   })
 })

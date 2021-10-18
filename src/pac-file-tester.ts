@@ -2,6 +2,7 @@ import {address} from 'ip'
 import vm from 'vm'
 import http from 'http'
 import fs from 'fs'
+import path from 'path'
 
 import {resolve} from 'dns-sync'
 
@@ -133,7 +134,9 @@ export const getFileContents = async url => {
       })
     } else {
       // File
-      resolve(fs.readFileSync(url).toString())
+      resolve(
+        fs.readFileSync(path.resolve(url.replace('file://', ''))).toString()
+      )
     }
   })
 }
