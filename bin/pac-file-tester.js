@@ -21,9 +21,14 @@ program
     '-d --dns <string>',
     'Manual DNS entry in the form HOST|IP e.g. google.com|8.8.8.8'
   )
+  .option(
+    '-v --verbose',
+    'Makes pac-file-tester verbose during operation',
+    false
+  )
   .parse(process.argv)
 
-const {file, url, dns, ip, compare} = program.opts()
+const {file, url, dns, ip, compare, verbose} = program.opts()
 
 if (!file) {
   console.log('No PAC File supplied')
@@ -36,7 +41,9 @@ if (!url) {
 }
 
 const run = async (pacUrl, dnsEntries) => {
-  console.log(pacUrl)
+  if(verbose){
+    console.log(pacUrl)
+  }
   const script = await pft.getFileContents(pacUrl)
 
   if (dns) {
