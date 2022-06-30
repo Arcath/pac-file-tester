@@ -27,6 +27,7 @@ npx pac-file-tester -f http://your.site/proxy.pac -u http://www.google.com
 - -c --compare, the url/path of another pac file to compare output & speed with.
   (Optional)
 - -d --dns, a manual DNS entry, e.g. `dns.google.com|8.8.8.8`
+- -v --verbose, enables verbose during operation
 
 ### Pragmatically
 
